@@ -2,7 +2,6 @@ const sqlite3 = require("sqlite3");
 const { createDatabase, createTables } = require("./createDatabase");
 
 function connectDatabase() {
-  console.log("connectDatabase");
   return new Promise((resolve, reject) => {
     const db = new sqlite3.Database(
       "database.db",

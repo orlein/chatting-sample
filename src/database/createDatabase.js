@@ -59,9 +59,9 @@ async function createTables(newdb) {
           console.log(err);
           reject(err);
         }
+        resolve();
       }
     );
-    resolve();
   });
 }
 

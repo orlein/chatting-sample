@@ -5,7 +5,7 @@ const sqlite3 = require("sqlite3");
  * @param {string} query
  * @param {string[]} params
  */
-function useDatabase(query, params) {
+async function useDatabase(query, params) {
   return new Promise((resolve, reject) => {
     const db = new sqlite3.Database(
       "database.db",
