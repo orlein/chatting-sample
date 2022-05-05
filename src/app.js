@@ -8,21 +8,36 @@
  */
 
 const express = require("express");
+const next = require("next");
 const cookieParser = require("cookie-parser");
+
+const port = parseInt(process.env.PORT, 10) || 3000;
+const dev = process.env.NODE_ENV !== "production";
+
 const routes = require("./routes");
 const connectDatabase = require("./database/connectDatabase");
 
-const app = express();
+const nextApp = next({ dev });
+const handle = nextApp.getRequestHandler();
 
 const init = () => {
-  app.use(cookieParser());
-  app.use(express.json()); // for parsing application/json
-  app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-  connectDatabase();
+  nextApp.prepare().then(() => {
+    const expressServer = express();
+    expressServer.use(cookieParser());
+    expressServer.use(express.json()); // for parsing application/json
+    expressServer.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+    connectDatabase();
 
-  app.use(routes);
+    expressServer.use(routes);
+    expressServer.get("*", (req, res) => handle(req, res));
 
-  app.listen(3000);
+    expressServer.listen(port, (err) => {
+      if (err) {
+        throw err;
+      }
+      console.log(`> Ready on http://localhost:${port}`);
+    });
+  });
 };
 
 init();
