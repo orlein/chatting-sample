@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-router.post("/authentication/login", async (req, res) => {
+router.post("/api/v1/authentication/login", async (req, res) => {
   const { email, password } = req.body;
   const users = await useDatabase(
     `SELECT * FROM users WHERE email = ? AND password = ?`,

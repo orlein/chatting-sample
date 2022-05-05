@@ -2,11 +2,11 @@ const express = require("express");
 
 const router = express.Router();
 
-router.get("/room", (req, res) => {
+router.get("/api/v1/room", (req, res) => {
   res.send("room");
 });
 
-router.get("/room/hi", (req, res) => {
+router.get("/api/v1/room/hi", (req, res) => {
   res.send("hi");
 });
 
