@@ -42,7 +42,7 @@ const roomRepository = {
       `SELECT * FROM users WHERE id IN (SELECT user_id FROM roomUsers WHERE room_id = ?)`,
       [roomId]
     );
-    return users;
+    return users.map(({ password, ...user }) => user);
   },
   getRoomMessages: async (roomId) => {
     const roomMessages = await useDatabase(
@@ -55,17 +55,28 @@ const roomRepository = {
     return roomMessages;
   },
   addMessage: async (roomId, userId, message) => {
+    const now = new Date().getTime().toString();
     const messageResult = await useDatabase(
-      `INSERT into messages (room_id, user_id, message) values (?, ?, ?)`,
-      [roomId, userId, message]
+      `INSERT into messages (room_id, user_id, message, created_at, updated_at) values (?, ?, ?, ?, ?)`,
+      [roomId, userId, message, now, now]
     );
-    return messageResult;
+
+    return {
+      roomId,
+      userId,
+      message,
+      createdAt: now,
+      updatedAt: now,
+    };
   },
   quitRoom: async (roomId, userId) => {
     const room = await useDatabase(
       `DELETE FROM roomUsers WHERE room_id = ? AND user_id = ?`,
       [roomId, userId]
     );
+  },
+  removeMessagesFromRoom: async (roomId) => {
+    await useDatabase(`DELETE FROM messages WHERE room_id = ?`, [roomId]);
   },
 };
 

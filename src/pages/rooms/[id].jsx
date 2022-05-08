@@ -85,7 +85,7 @@ export default function ChatRoom(props) {
         roomId: props.roomId,
         message,
         userId: user.id,
-        nickname: props.nickname,
+        nickname: user.nickname,
       })
     );
 
@@ -115,7 +115,10 @@ export default function ChatRoom(props) {
           />
           <button onClick={handleSendMessage}>Send</button>
           {messages.map((message) => (
-            <div key={`message_${message.id}`} className={styles.chatMessage}>
+            <div
+              key={`message_${message.createdAt}`}
+              className={styles.chatMessage}
+            >
               <p className={styles.nickname}>{message.nickname}</p>
               <p className={styles.message}>{message.message}</p>
             </div>
