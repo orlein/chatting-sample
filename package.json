@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/app.js",
+    "start": "node .next/app.js",
     "dev": "nodemon src/app.js",
-    "build": "webpack --config ./webpack/webpack.config.js && next build"
+    "build": "next build && webpack --config ./webpack/webpack.config.js"
   },
   "keywords": [],
   "author": "",
