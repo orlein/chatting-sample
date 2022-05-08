@@ -4,6 +4,7 @@ import React from "react";
 import { io } from "socket.io-client";
 import RoomSelectorBox from "../../frontend/components/RoomSelectorBox";
 import authenticationGuard from "../../frontend/guards/authenticationGuard";
+import useGuard from "../../frontend/hooks/useGuard";
 import styles from "./rooms.module.css";
 
 const fetchLogout = async () => {
@@ -33,6 +34,7 @@ const fetchJoinRoom = async (roomId) => {
 
 export default function Rooms(props) {
   const router = useRouter();
+  const { user } = useGuard();
   const socket = React.useMemo(() => io(), []);
   const [rooms, setRooms] = React.useState([]);
   const [roomName, setRoomName] = React.useState("");
@@ -141,7 +143,7 @@ export default function Rooms(props) {
               <RoomSelectorBox
                 key={`room_${room.id}`}
                 {...room}
-                isRemoveAvailable={room.creatorUserId === props.user.id}
+                isRemoveAvailable={room.creatorUserId === user.id}
                 onClickJoin={handleClickJoinRoom(room.id)}
                 onClickRemove={handleClickRemoveRoom(room.id)}
               />
@@ -152,8 +154,8 @@ export default function Rooms(props) {
         <div className={styles.right}>
           <button onClick={handleLogout}>Logout</button>
           <div className={styles.userBox}>
-            <h3>Your nickname is: {props.user.nickname}</h3>
-            <p>User ID: {props.user.id}</p>
+            <h3>Your nickname is: {user.nickname}</h3>
+            <p>User ID: {user.id}</p>
           </div>
         </div>
       </div>
@@ -164,15 +166,16 @@ export default function Rooms(props) {
   );
 }
 
-export async function getServerSideProps(context) {
-  const guardResult = await authenticationGuard(context);
-  if (guardResult.type === "REDIRECT") {
-    return { redirect: guardResult.redirect };
-  }
+// export async function getServerSideProps(context) {
+//   console.log(context.resolvedUrl);
+//   const guardResult = await authenticationGuard(context);
+//   if (guardResult.type === "REDIRECT") {
+//     return { redirect: guardResult.redirect };
+//   }
 
-  return {
-    props: {
-      user: guardResult.response.data.data[0],
-    },
-  };
-}
+//   return {
+//     props: {
+//       user: guardResult.response.data.data[0],
+//     },
+//   };
+// }

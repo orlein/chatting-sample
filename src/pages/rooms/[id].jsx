@@ -4,6 +4,7 @@ import io from "socket.io-client";
 import authenticationGuard from "../../frontend/guards/authenticationGuard";
 import axios from "axios";
 import styles from "./room.module.css";
+import useGuard from "../../frontend/hooks/useGuard";
 
 const fetchMessages = async (roomId) => {
   const response = await axios.get(`/api/v1/room/${roomId}/message`);
@@ -16,6 +17,7 @@ const fetchRoomUsers = async (roomId) => {
 };
 
 export default function ChatRoom(props) {
+  const { user } = useGuard();
   const router = useRouter();
   const socket = React.useMemo(() => io(), []);
   const [messages, setMessages] = React.useState([]);
@@ -26,7 +28,7 @@ export default function ChatRoom(props) {
   React.useEffect(() => {
     socket.emit(
       "/socket/v1/room/join",
-      JSON.stringify({ roomId: props.roomId, userId: props.userId })
+      JSON.stringify({ roomId: props.roomId, userId: user.id })
     );
 
     socket.on("/socket/v1/room/join", (stringifiedData) => {
@@ -50,7 +52,7 @@ export default function ChatRoom(props) {
     return () => {
       socket.emit(
         "/socket/v1/room/quit",
-        JSON.stringify({ roomId: props.roomId, userId: props.userId })
+        JSON.stringify({ roomId: props.roomId, userId: user.id })
       );
       socket.disconnect();
     };
@@ -82,7 +84,7 @@ export default function ChatRoom(props) {
       JSON.stringify({
         roomId: props.roomId,
         message,
-        userId: props.userId,
+        userId: user.id,
         nickname: props.nickname,
       })
     );
@@ -134,16 +136,9 @@ export default function ChatRoom(props) {
 }
 
 export const getServerSideProps = async (ctx) => {
-  const guardResult = await authenticationGuard(ctx);
-  if (guardResult.type === "REDIRECT") {
-    return { redirect: guardResult.redirect };
-  }
-
   return {
     props: {
       roomId: ctx.query.id,
-      userId: guardResult.response.data.data[0].id,
-      nickname: guardResult.response.data.data[0].nickname,
     },
   };
 };
