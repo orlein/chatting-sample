@@ -36,6 +36,7 @@ const roomService = {
       userId,
       message
     );
+    console.log("messageResult", messageResult);
     return messageResult;
   },
   quitRoom: async (roomId, userId) => {
