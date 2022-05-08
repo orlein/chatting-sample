@@ -83,6 +83,7 @@ export default function ChatRoom(props) {
         roomId: props.roomId,
         message,
         userId: props.userId,
+        nickname: props.nickname,
       })
     );
 
@@ -142,6 +143,7 @@ export const getServerSideProps = async (ctx) => {
     props: {
       roomId: ctx.query.id,
       userId: guardResult.response.data.data[0].id,
+      nickname: guardResult.response.data.data[0].nickname,
     },
   };
 };

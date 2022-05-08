@@ -21,9 +21,9 @@ const roomSocket = (io, socket) => {
   });
   socket.on("/socket/v1/room/chat", (stringifiedData) => {
     const data = JSON.parse(stringifiedData);
-    const { roomId, userId, message } = data;
+    const { roomId, userId, nickname, message } = data;
 
-    roomService.addMessage(roomId, userId, message);
+    roomService.addMessage(roomId, userId, nickname, message);
 
     io.in(roomId).emit("/socket/v1/room/chat", stringifiedData);
   });
