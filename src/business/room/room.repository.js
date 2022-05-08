@@ -38,15 +38,18 @@ const roomRepository = {
     return room;
   },
   getRoomUsers: async (roomId) => {
-    const roomUsers = await useDatabase(
-      `SELECT * FROM roomUsers WHERE room_id = ?`,
+    const users = await useDatabase(
+      `SELECT * FROM users WHERE id IN (SELECT user_id FROM roomUsers WHERE room_id = ?)`,
       [roomId]
     );
-    return roomUsers;
+    return users;
   },
   getRoomMessages: async (roomId) => {
     const roomMessages = await useDatabase(
-      `SELECT * FROM messages WHERE room_id = ?`,
+      `SELECT messages.*, users.nickname
+      FROM messages
+      LEFT JOIN users ON users.id = messages.user_id
+      WHERE room_id = ?`,
       [roomId]
     );
     return roomMessages;

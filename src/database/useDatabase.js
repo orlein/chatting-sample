@@ -1,4 +1,5 @@
 const sqlite3 = require("sqlite3");
+const transformObjectKeyFromSnakeToCamel = require("../util/transformObjectKeyFromSnakeToCamel");
 
 /**
  *
@@ -22,8 +23,8 @@ async function useDatabase(query, params) {
         console.log(err);
         reject(err);
       }
-
-      resolve(result);
+      const transformed = transformObjectKeyFromSnakeToCamel(result);
+      resolve(transformed);
     });
   });
 }

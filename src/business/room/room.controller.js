@@ -31,7 +31,7 @@ router.post(
   "/api/v1/room/:id/join",
   jwtDeserializerMiddleware,
   async (req, res) => {
-    const room = await roomService.joinRoom(req.params.id, req.user.userId);
+    const room = await roomService.joinRoom(req.params.id, req.user.id);
     res.send(room);
   }
 );
@@ -40,7 +40,7 @@ router.get(
   "/api/v1/room/:id/message",
   jwtDeserializerMiddleware,
   async (req, res) => {
-    const messages = await roomService.getMessages(req.params.id);
+    const messages = await roomService.getRoomMessages(req.params.id);
     res.send(messages);
   }
 );
@@ -55,6 +55,15 @@ router.post(
       req.body.message
     );
     res.send(message);
+  }
+);
+
+router.get(
+  "/api/v1/room/:id/user",
+  jwtDeserializerMiddleware,
+  async (req, res) => {
+    const users = await roomService.getRoomUsers(req.params.id);
+    res.send(users);
   }
 );
 

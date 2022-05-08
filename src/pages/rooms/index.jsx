@@ -1,24 +1,10 @@
-import React from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
-import styles from "./rooms.module.css";
+import React from "react";
+import { io } from "socket.io-client";
 import RoomSelectorBox from "../../frontend/components/RoomSelectorBox";
-
-const fetchInfo = async (param) => {
-  const isFromServer = param && param.isFromServer;
-  const cookie = param && param.cookie;
-
-  const response = await axios.get(
-    "/api/v1/auth/info",
-    param && {
-      baseURL: isFromServer ? "http://localhost:3000/" : "",
-      headers: {
-        Cookie: cookie,
-      },
-    }
-  );
-  return response;
-};
+import authenticationGuard from "../../frontend/guards/authenticationGuard";
+import styles from "./rooms.module.css";
 
 const fetchLogout = async () => {
   const response = await axios.post("/api/v1/auth/logout");
@@ -47,6 +33,7 @@ const fetchJoinRoom = async (roomId) => {
 
 export default function Rooms(props) {
   const router = useRouter();
+  const socket = React.useMemo(() => io(), []);
   const [rooms, setRooms] = React.useState([]);
   const [roomName, setRoomName] = React.useState("");
   const [errorMessage, setErrorMessage] = React.useState("");
@@ -55,6 +42,22 @@ export default function Rooms(props) {
     fetchRooms().then((res) => {
       setRooms(res.data);
     });
+  }, []);
+
+  React.useEffect(() => {
+    socket.on("/socket/v1/room", (stringified) => {
+      const data = JSON.parse(stringified);
+
+      if (data.type === "ROOM_CREATED" || data.type === "ROOM_REMOVED") {
+        fetchRooms().then((res) => {
+          setRooms(res.data);
+        });
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   const handleLogout = async () => {
@@ -74,6 +77,7 @@ export default function Rooms(props) {
 
     try {
       const res = await fetchCreateRoom(roomName);
+      socket.emit("/socket/v1/room", JSON.stringify({ type: "ROOM_CREATED" }));
       setRooms((prev) => [...prev, res.data]);
       setRoomName("");
     } catch (error) {
@@ -88,6 +92,10 @@ export default function Rooms(props) {
 
       try {
         await fetchRemoveRoom(roomId);
+        socket.emit(
+          "/socket/v1/room",
+          JSON.stringify({ type: "ROOM_REMOVED" })
+        );
         setRooms((prev) => prev.filter((room) => room.id !== roomId));
       } catch (error) {
         setErrorMessage(error.response.data.message);
@@ -133,7 +141,7 @@ export default function Rooms(props) {
               <RoomSelectorBox
                 key={`room_${room.id}`}
                 {...room}
-                isRemoveAvailable={room.creator_user_id === props.user.id}
+                isRemoveAvailable={room.creatorUserId === props.user.id}
                 onClickJoin={handleClickJoinRoom(room.id)}
                 onClickRemove={handleClickRemoveRoom(room.id)}
               />
@@ -156,33 +164,15 @@ export default function Rooms(props) {
   );
 }
 
-const redirectToHome = {
-  redirect: {
-    destination: "/",
-    permanent: false,
-  },
-};
-
 export async function getServerSideProps(context) {
-  // cookie 검증
-  const cookie = context?.req?.headers?.cookie;
-
-  if (!cookie) {
-    return redirectToHome;
+  const guardResult = await authenticationGuard(context);
+  if (guardResult.type === "REDIRECT") {
+    return { redirect: guardResult.redirect };
   }
 
-  try {
-    const response = await fetchInfo({
-      isFromServer: true,
-      cookie: context.req.headers.cookie,
-    });
-
-    return {
-      props: {
-        user: response.data.data[0],
-      },
-    };
-  } catch (error) {
-    return redirectToHome;
-  }
+  return {
+    props: {
+      user: guardResult.response.data.data[0],
+    },
+  };
 }

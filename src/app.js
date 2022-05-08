@@ -8,14 +8,17 @@
  */
 
 const express = require("express");
+const http = require("http");
 const next = require("next");
 const cookieParser = require("cookie-parser");
+const socketio = require("socket.io");
 
 const port = parseInt(process.env.PORT, 10) || 3000;
 const dev = process.env.NODE_ENV !== "production";
 
 const common = require("./constants/common");
 const routes = require("./routes");
+const sockets = require("./sockets");
 const connectDatabase = require("./database/connectDatabase");
 
 const nextApp = next({ dev });
@@ -33,7 +36,12 @@ const init = () => {
     expressServer.use(routes);
     expressServer.get("*", (req, res) => handle(req, res));
 
-    expressServer.listen(port, (err) => {
+    const httpServer = http.createServer(expressServer);
+    const io = new socketio.Server(httpServer);
+
+    io.on("connection", sockets.onConnection(io));
+
+    httpServer.listen(port, (err) => {
       if (err) {
         throw err;
       }
