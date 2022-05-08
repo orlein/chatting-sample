@@ -260,3 +260,4 @@ router.post("/api/v1/user", async (req, res) => {
 `app.js`에서 controller가 들어갈 부분들을 routes로 묶습니다. `routes.js`에서 경로에 관한걸 모두 다루면, `app.js`는 되도록 변화가 없어지기 때문에 "이 파일이 변화하는 상황"을 추적할 때 매우 편리해집니다.
 
 ## 2. `routes.js` 정리
+

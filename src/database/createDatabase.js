@@ -10,8 +10,7 @@ async function createTables(newdb) {
       `
       CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        email TEXT,
+        nickname TEXT NOT NULL UNIQUE,
         password TEXT,
         created_at TEXT,
         updated_at TEXT
@@ -27,7 +26,7 @@ async function createTables(newdb) {
 
       CREATE TABLE IF NOT EXISTS roles (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
+        name TEXT NOT NULL UNIQUE,
         created_at TEXT,
         updated_at TEXT
       );
@@ -35,6 +34,7 @@ async function createTables(newdb) {
       CREATE TABLE IF NOT EXISTS rooms (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
+        creator_user_id INTEGER,
         created_at TEXT,
         updated_at TEXT
       );
@@ -48,7 +48,7 @@ async function createTables(newdb) {
         updated_at TEXT
       );
       
-      CREATE TABLE IF NOT EXISTS room_users (
+      CREATE TABLE IF NOT EXISTS roomUsers (
         room_id INTEGER,
         user_id INTEGER
       );

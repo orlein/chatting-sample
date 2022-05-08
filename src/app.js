@@ -14,6 +14,7 @@ const cookieParser = require("cookie-parser");
 const port = parseInt(process.env.PORT, 10) || 3000;
 const dev = process.env.NODE_ENV !== "production";
 
+const common = require("./constants/common");
 const routes = require("./routes");
 const connectDatabase = require("./database/connectDatabase");
 
@@ -23,7 +24,7 @@ const handle = nextApp.getRequestHandler();
 const init = () => {
   nextApp.prepare().then(() => {
     const expressServer = express();
-    expressServer.use(cookieParser());
+    expressServer.use(cookieParser(common.cookieSecret));
     expressServer.use(express.json()); // for parsing application/json
     expressServer.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
     connectDatabase();

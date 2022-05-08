@@ -1,8 +1,9 @@
 const express = require("express");
+const jwtDeserializerMiddleware = require("../../auth/jwtDeserializer.middleware");
 
 const router = express.Router();
 
-router.get("/api/v1/room", (req, res) => {
+router.get("/api/v1/rooms", jwtDeserializerMiddleware, (req, res) => {
   res.send("room");
 });
 

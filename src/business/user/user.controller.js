@@ -4,6 +4,9 @@ const router = express.Router();
 
 router.get("/api/v1/user", async (req, res) => {
   const users = await useDatabase(`SELECT * FROM users`, []);
+
+  res.cookie("token", "jwt token", { httpOnly: true });
+
   res.send(users);
 });
 

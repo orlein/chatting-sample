@@ -1,0 +1,13 @@
+.inputBox {
+  display: flex;
+  flex-direction: row;
+}
+
+.inputBox > input {
+  flex: 1;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  padding: 0;
+  margin: 10px;
+}
+
