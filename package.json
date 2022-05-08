@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node .next/app.js",
+    "start": "rimraf database.db && node .next/app.js",
     "dev": "nodemon src/app.js",
     "build": "next build && webpack --config ./webpack/webpack.config.js"
   },
@@ -32,6 +32,7 @@
     "@babel/preset-env": "^7.17.10",
     "babel-loader": "^8.2.5",
     "nodemon": "^2.0.16",
+    "rimraf": "^3.0.2",
     "webpack": "^5.72.0",
     "webpack-cli": "^4.9.2",
     "webpack-node-externals": "^3.0.0"
