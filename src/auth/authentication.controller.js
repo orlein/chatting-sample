@@ -50,23 +50,20 @@ router.post(
         data: [],
       });
     }
+
     req.user = { nickname };
     res.locals.message = serviceResult.message;
     next();
   },
   jwtSerializerMiddleware,
-  async (req, res, next) => {
+  async (req, res) => {
     const { nickname, password } = req.body;
     const serviceResult = await authenticationService.join({
       nickname,
       password,
     });
 
-    req.user = serviceResult.data[0];
-    res.locals.message = serviceResult.message;
-
-    next();
-    res.status(200).send({
+    return res.status(200).send({
       result: true,
       message: res.locals.message,
       data: serviceResult.data,

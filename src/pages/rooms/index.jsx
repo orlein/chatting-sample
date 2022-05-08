@@ -33,7 +33,18 @@ export default function Rooms(props) {
   return (
     <div>
       <h2>Chat Rooms</h2>
-      <h3>Your nickname is: {props.user.nickname}</h3>
+      <h3>Your nickname is: {user.nickname}</h3>
+
+      <div>
+        <p>Room1</p>
+        <p> id: 1</p>
+        <button>Join Room</button>
+      </div>
+      <div>
+        <p>Room2</p>
+        <p> id: 2</p>
+        <button>Join Room</button>
+      </div>
     </div>
   );
 }
@@ -52,8 +63,6 @@ export async function getServerSideProps(context) {
       },
     };
   }
-
-  console.log("??", response.data.data[0]);
 
   return {
     props: {

@@ -30,6 +30,8 @@ const authenticationService = {
       nickname,
     });
 
+    console.log({ respositoryResult });
+
     if (respositoryResult.length > 0) {
       return {
         result: false,

@@ -3,16 +3,17 @@ const jwtConstants = require("../constants/jwtConstants");
 const common = require("../constants/common");
 
 async function jwtSerializerMiddleware(req, res, next) {
-  const { nickname } = req.user;
+  const { password, ...user } = req.user;
 
-  const token = jwt.sign({ nickname }, jwtConstants.jwtKey, {
+  /** jwt */
+  const token = jwt.sign(user, jwtConstants.jwtKey, {
     expiresIn: jwtConstants.expiresIn,
   });
 
   res.cookie("accessToken", token, {
     signed: true,
-    expires: jwtConstants.expires(),
     secret: common.cookieSecret,
+    expires: jwtConstants.expires(),
   });
 
   next();
