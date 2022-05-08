@@ -29,7 +29,11 @@ async function jwtDeserializerMiddleware(req, res, next) {
     nickname: decoded.nickname,
   });
 
-  const { password, ...user } = infoResult.data[0];
+  if (infoResult.data[0].password) {
+    delete infoResult.data[0].password;
+  }
+
+  const user = infoResult.data[0];
 
   req.user = user;
   res.locals.message = "Access token is valid";
