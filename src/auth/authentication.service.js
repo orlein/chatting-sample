@@ -26,13 +26,11 @@ const authenticationService = {
     };
   },
   checkDuplication: async ({ nickname }) => {
-    const respositoryResult = await getUserByNickname({
+    const data = await getUserByNickname({
       nickname,
     });
 
-    console.log({ respositoryResult });
-
-    if (respositoryResult.length > 0) {
+    if (data.length > 0) {
       return {
         result: false,
         message: `Nickname is already used`,
@@ -61,9 +59,9 @@ const authenticationService = {
     };
   },
   info: async ({ nickname }) => {
-    const respositoryResult = await getUserByNickname(nickname);
+    const data = await getUserByNickname(nickname);
 
-    if (!respositoryResult.result) {
+    if (!data.length === 0) {
       return {
         result: false,
         message: `User not found`,
@@ -74,11 +72,11 @@ const authenticationService = {
     return {
       result: true,
       message: `Successfully found user`,
-      data: [respositoryResult],
+      data,
     };
   },
   authorizeUser: async ({ nickname, roleName }) => {
-    const users = authenticationRepository.getUserByNickname(nickname);
+    const users = getUserByNickname(nickname);
 
     if (users.length === 0) {
       return { data: [], message: "User not found", result: false };

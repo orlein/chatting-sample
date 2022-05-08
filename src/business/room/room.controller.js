@@ -10,15 +10,28 @@ router.get("/api/v1/room", jwtDeserializerMiddleware, async (req, res) => {
 });
 
 router.post("/api/v1/room", jwtDeserializerMiddleware, async (req, res) => {
-  const room = await roomService.addRoomByUser(req.user.nickname);
+  const room = await roomService.addRoomByUser(req.body.roomName, req.user.id);
   res.send(room);
 });
+
+router.delete(
+  "/api/v1/room/:id",
+  jwtDeserializerMiddleware,
+  async (req, res) => {
+    const room = await roomService.removeRoomByUser(req.params.id, req.user.id);
+    res.send({
+      message: "Room deleted",
+      result: true,
+      data: [],
+    });
+  }
+);
 
 router.post(
   "/api/v1/room/:id/join",
   jwtDeserializerMiddleware,
   async (req, res) => {
-    const room = await roomService.joinRoom(req.params.id, req.user.nickname);
+    const room = await roomService.joinRoom(req.params.id, req.user.userId);
     res.send(room);
   }
 );

@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const jwtConstants = require("../constants/jwtConstants");
+const authenticationService = require("./authentication.service");
 
 async function jwtDeserializerMiddleware(req, res, next) {
   const accessToken = req.signedCookies.accessToken;
@@ -24,9 +25,14 @@ async function jwtDeserializerMiddleware(req, res, next) {
     });
   }
 
-  req.user = {
+  const infoResult = await authenticationService.info({
     nickname: decoded.nickname,
-  };
+  });
+
+  const { password, ...user } = infoResult.data[0];
+
+  req.user = user;
+  res.locals.message = "Access token is valid";
 
   next();
 }

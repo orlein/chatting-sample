@@ -27,6 +27,7 @@ const init = () => {
     expressServer.use(cookieParser(common.cookieSecret));
     expressServer.use(express.json()); // for parsing application/json
     expressServer.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+    expressServer.disable("etag");
     connectDatabase();
 
     expressServer.use(routes);

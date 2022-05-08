@@ -1,3 +1,5 @@
+const useDatabase = require("../../database/useDatabase");
+
 const roomRepository = {
   getAllRooms: async () => {
     const rooms = await useDatabase(`SELECT * FROM rooms`, []);
@@ -9,13 +11,24 @@ const roomRepository = {
     ]);
     return room;
   },
-  addRoomByUser: async (userId) => {
+  addRoomByUser: async (roomName, userId) => {
+    await useDatabase(
+      `INSERT into rooms (name, creator_user_id) values (?, ?)`,
+      [roomName, userId]
+    );
+
     const room = await useDatabase(
-      `INSERT into rooms (name, creator_user_id) values ('room1', ?)`,
-      [userId]
+      `SELECT * FROM rooms WHERE creator_user_id = ? AND name = ?`,
+      [userId, roomName]
     );
 
     return room;
+  },
+  removeRoomByUser: async (roomId, userId) => {
+    await useDatabase(
+      `DELETE FROM rooms WHERE id = ? AND creator_user_id = ?`,
+      [roomId, userId]
+    );
   },
   joinRoom: async (roomId, userId) => {
     const room = await useDatabase(

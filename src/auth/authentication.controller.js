@@ -79,4 +79,12 @@ router.get("/api/v1/auth/info", jwtDeserializerMiddleware, async (req, res) => {
   });
 });
 
+router.post("/api/v1/auth/logout", async (req, res) => {
+  return res.clearCookie("accessToken").status(200).send({
+    result: true,
+    message: "Logout success",
+    data: [],
+  });
+});
+
 module.exports = router;

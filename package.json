@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/app.js"
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
   },
   "keywords": [],
   "author": "",
@@ -23,5 +24,8 @@
     "socket.io": "^4.5.0",
     "socket.io-client": "^4.5.0",
     "sqlite3": "^5.0.6"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
   }
 }

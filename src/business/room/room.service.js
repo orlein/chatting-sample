@@ -9,8 +9,13 @@ const roomService = {
     const room = await roomRepository.getRoomById(roomId);
     return room;
   },
-  addRoomByUser: async (userId) => {
-    const room = await roomRepository.addRoomByUser(userId);
+  addRoomByUser: async (roomName, userId) => {
+    const room = await roomRepository.addRoomByUser(roomName, userId);
+
+    return room[0];
+  },
+  removeRoomByUser: async (roomId, userId) => {
+    const room = await roomRepository.removeRoomByUser(roomId, userId);
     return room;
   },
   joinRoom: async (roomId, userId) => {
